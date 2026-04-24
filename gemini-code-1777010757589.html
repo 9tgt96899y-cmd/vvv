@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2016 金權巔峰錄 | The Power Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Noto+Serif+TC:wght@400;600;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <style>
+        :root {
+            --gold-gradient: linear-gradient(135deg, #c5a059 0%, #f1d392 50%, #b38d46 100%);
+            --dark-green: #0a1f18;
+            --emerald: #14362a;
+            --accent-gold: #d4af37;
+            --cream: #f4ead5;
+            --glass: rgba(20, 54, 42, 0.85);
+        }
+
+        body {
+            background-color: var(--dark-green);
+            background-image: 
+                radial-gradient(circle at center, rgba(20, 54, 42, 0.5) 0%, rgba(10, 31, 24, 1) 100%),
+                url('https://www.transparenttextures.com/patterns/black-linen.png');
+            color: var(--cream);
+            font-family: 'Noto Serif TC', serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 華麗邊框裝飾 */
+        .page-border {
+            position: fixed;
+            top: 20px; left: 20px; right: 20px; bottom: 20px;
+            border: 1px solid var(--accent-gold);
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .corner {
+            position: fixed;
+            width: 80px; height: 80px;
+            border: 4px solid var(--accent-gold);
+            z-index: 1001;
+            pointer-events: none;
+        }
+        .top-left { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+        .top-right { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+        .bottom-left { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+        .bottom-right { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+        .container {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 40px;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 4rem;
+            margin: 0;
+            letter-spacing: 12px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        .subtitle {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            color: var(--accent-gold);
+            margin-top: 15px;
+            letter-spacing: 4px;
+            opacity: 0.9;
+        }
+
+        .intro-text {
+            max-width: 700px;
+            margin: 30px auto;
+            font-size: 1.1rem;
+            color: rgba(244, 234, 213, 0.7);
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            padding-top: 20px;
+        }
+
+        /* 英雄榜（Top 3） */
+        .top-tier-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .tier-card {
+            background: var(--glass);
+            border: 1px solid var(--accent-gold);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .tier-card:hover {
+            transform: translateY(-15px);
+            background: var(--emerald);
+        }
+
+        .tier-rank {
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tier-name {
+            font-size: 2rem;
+            font-weight: 900;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .tier-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* 搜尋與過濾 */
+        .control-panel {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 2px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--accent-gold);
+            padding: 10px 15px;
+            color: var(--cream);
+            font-size: 1.2rem;
+            width: 350px;
+            outline: none;
+            font-family: 'Noto Serif TC', serif;
+        }
+
+        .stats-glance {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item { text-align: right; }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent-gold); }
+        .stat-value { font-size: 1.8rem; font-family: 'Cinzel', serif; font-weight: 700; }
+
+        /* 表格優化 */
+        .archive-wrapper {
+            background: var(--glass);
+            padding: 2px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: rgba(0,0,0,0.5);
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            padding: 25px 20px;
+            text-align: left;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            transition: 0.3s;
+        }
+
+        tr:hover td {
+            background: rgba(212, 175, 55, 0.05);
+            color: #fff;
+        }
+
+        .party-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border: 1px solid currentColor;
+            opacity: 0.8;
+        }
+
+        .money-cell {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--accent-gold);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--dark-green); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-gold); border: 2px solid var(--dark-green); }
+
+        @media (max-width: 768px) {
+            .top-tier-section { grid-template-columns: 1fr; }
+            .control-panel { flex-direction: column; gap: 20px; }
+            h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="corner top-left"></div>
+    <div class="corner top-right"></div>
+    <div class="corner bottom-left"></div>
+    <div class="corner bottom-right"></div>
+    <div class="page-border"></div>
+
+    <div class="container">
+        <header>
+            <h1>THE POWER LEDGER</h1>
+            <div class="subtitle">2016 金權巔峰錄：第九屆國會獻金檔案</div>
+            <p class="intro-text">
+                「在權力的遊戲中，每一筆數字都是一場隱秘的博弈。」<br>
+                本檔案讀取自 2016.csv，揭示影響台灣政經版圖的關鍵流鑰。
+            </p>
+        </header>
+
+        <div class="top-tier-section" id="topTier">
+            </div>
+
+        <div class="control-panel">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜尋權力角逐者、政黨或選區..." onkeyup="filterData()">
+            </div>
+            <div class="stats-glance">
+                <div class="stat-item">
+                    <div class="stat-label">Archive Count / 存檔總數</div>
+                    <div class="stat-value" id="totalCount">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Peak Capital / 巔峰資本</div>
+                    <div class="stat-value" id="maxIncome">$0</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="archive-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>姓名 Name</th>
+                        <th>黨籍 Affiliation</th>
+                        <th>選區 District</th>
+                        <th>總收入 Income (TWD)</th>
+                        <th>總支出 Expense (TWD)</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+<script>
+    let rawData = [];
+
+    // 直接抓取同一個檔案夾的 2016.csv
+    async function loadCSVData() {
+        try {
+            const response = await fetch('2016.csv');
+            const csvString = await response.text();
+            
+            // 使用 PapaParse 解析 CSV
+            Papa.parse(csvString, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processData(results.data);
+                }
+            });
+        } catch (error) {
+            console.error("無法讀取 CSV 檔案:", error);
+            document.getElementById('tableBody').innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">錯誤：無法找到 2016.csv。請確保 HTML 與 CSV 檔案在同一資料夾內。</td></tr>`;
+        }
+    }
+
+    function processData(data) {
+        // 將 CSV 欄位對應到網頁所需的格式
+        rawData = data.map(row => {
+            return {
+                name: row["姓名"],
+                party: row["推薦政黨"],
+                area: row["地區"],
+                // 清理數字字串中的逗號並轉換為整數
+                income: parseInt((row["總收入"] || "0").replace(/,/g, '')) || 0,
+                expense: parseInt((row["總支出"] || "0").replace(/,/g, '')) || 0
+            };
+        }).sort((a, b) => b.income - a.income); // 預設依收入排序
+
+        init();
+    }
+
+    function init() {
+        renderTopTier();
+        renderTable(rawData);
+        updateStats(rawData);
+    }
+
+    function renderTopTier() {
+        const sorted = [...rawData].slice(0, 3);
+        const container = document.getElementById('topTier');
+        const titles = ["Gold Tier / 首位", "Silver Tier / 次位", "Bronze Tier / 末席"];
+        
+        container.innerHTML = sorted.map((item, index) => `
+            <div class="tier-card">
+                <span class="tier-rank">${titles[index]}</span>
+                <div class="tier-name">${item.name}</div>
+                <div class="party-badge">${item.party}</div>
+                <div class="tier-amount">$${item.income.toLocaleString()}</div>
+            </div>
+        `).join('');
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = data.map(item => `
+            <tr>
+                <td style="font-weight:700; font-size:1.1rem;">${item.name}</td>
+                <td><span class="party-badge">${item.party}</span></td>
+                <td style="color: rgba(244,234,213,0.6);">${item.area}</td>
+                <td class="money-cell">$${item.income.toLocaleString()}</td>
+                <td class="money-cell" style="opacity:0.7;">$${item.expense.toLocaleString()}</td>
+            </tr>
+        `).join('');
+    }
+
+    function updateStats(data) {
+        document.getElementById('totalCount').innerText = data.length;
+        const max = data.length > 0 ? Math.max(...data.map(d => d.income)) : 0;
+        document.getElementById('maxIncome').innerText = '$' + max.toLocaleString();
+    }
+
+    function filterData() {
+        const term = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = rawData.filter(item => 
+            (item.name && item.name.toLowerCase().includes(term)) || 
+            (item.party && item.party.toLowerCase().includes(term)) ||
+            (item.area && item.area.toLowerCase().includes(term))
+        );
+        renderTable(filtered);
+        updateStats(filtered);
+    }
+
+    // 啟動資料載入
+    window.onload = loadCSVData;
+</script>
+
+</body>
+</html>
