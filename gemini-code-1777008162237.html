@@ -1,54 +1,48 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Noto+Serif+TC:wght@700&display=swap" rel="stylesheet">
-    <title>2016 權力地圖 | 政治獻金資料庫</title>
+  <meta charset="UTF-8">
+  <title>政治獻金查詢｜2016</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header class="hero-section">
-            <h1 class="hero-title">The Ledger of Power</h1>
-            <p class="hero-narrative">
-                「追隨金錢的去向，你將看見權力的真相。」<br>
-                2016 年，那是台灣政治轉捩的一年。誰支撐了理想？誰投資了未來？
-            </p>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="輸入候選人姓名、政黨或企業...">
-                <button class="gold-button" onclick="location.href='2016_result.html'">揭開序幕</button>
-            </div>
-        </header>
 
-        <h2 class="section-title">範例查詢</h2>
-        <div class="editor-grid">
-            <div class="card">
-                <h3>柯建銘</h3>
-                <p>新竹市第 01 選區</p>
-                <p>總收入高達 5,164 萬，營利事業捐贈佔比過半...</p>
-                <a href="#">查看詳情 →</a>
-            </div>
-            <div class="card">
-                <h3>邱志偉</h3>
-                <p>高雄市第 02 選區</p>
-                <p>獲 133 家企業捐贈，地方實力深不可測。</p>
-                <a href="#">查看詳情 →</a>
-            </div>
-        </div>
+<div class="container">
 
-        <h2 class="section-title">編輯精選案例</h2>
-        <div class="editor-grid">
-            <div class="card">
-                <span class="tag">深度專題</span>
-                <h3>地產開發商的投資佈局</h3>
-                <p>分析 2016 年建設公司如何透過政治獻金，在各選區佈下綿密的影響力網絡。</p>
-            </div>
-            <div class="card">
-                <span class="tag">數據透視</span>
-                <h3>「百萬級」企業主名單</h3>
-                <p>誰是台灣政壇最大的幕後金主？我們整理了單筆捐贈超過百萬的企業名錄。</p>
-            </div>
-        </div>
+  <!-- Hero -->
+  <section class="hero">
+    <h1>政治獻金，流向何方？</h1>
+    <p>
+      在選舉與權力之間，金錢如何流動，決定了政策的輪廓。
+      這不只是數字，而是影響每一個人的制度基礎。
+    </p>
+  </section>
+
+  <!-- 搜尋 CTA -->
+  <section class="section">
+    <h2>開始查詢</h2>
+    <div class="search-box">
+      <input type="text" placeholder="輸入候選人 / 公司 / 關鍵字">
+      <button onclick="location.href='2016_result.html'">搜尋</button>
     </div>
+  </section>
+
+  <!-- 範例查詢 -->
+  <section class="section">
+    <h2>範例查詢</h2>
+    <div class="card">鴻海 → 哪些候選人收過捐款？</div>
+    <div class="card">台北市候選人 → 誰募款最多？</div>
+  </section>
+
+  <!-- Editor Picks -->
+  <section class="section">
+    <h2>編輯精選</h2>
+    <div class="card">企業捐款集中前10名候選人</div>
+    <div class="card">高額匿名捐款分析</div>
+    <div class="card">建商 vs 政治人物關聯</div>
+  </section>
+
+</div>
+
 </body>
 </html>
